@@ -180,7 +180,11 @@ def schedule_click_times(
     click_probability: float = 0.5,
     seed: int = DEFAULT_SEED + 1,
 ) -> np.ndarray:
-    """Keep random or rhythmic candidate clicks using Bernoulli probability."""
+    """Schedule jittered single clicks or complete probabilistic rhythmic trains.
+
+    In rhythmic mode, probability is applied once per train. A selected train keeps
+    all of its pulses, preserving both frequency and pulses-per-train.
+    """
     if duration_s <= 0:
         raise ValueError("duration_s must be positive")
     if schedule not in {"single-pulse", "rhythmic"}:
@@ -209,10 +213,30 @@ def schedule_click_times(
             raise ValueError("rhythmic train period must be positive")
         starts = np.arange(0.0, duration_s, train_period)
         offsets = np.arange(pulses_per_train, dtype=float) * pulse_spacing
-        candidates = (starts[:, None] + offsets[None, :]).ravel()
-        candidates = candidates[candidates < duration_s]
+        keep_trains = rng.random(starts.size) < click_probability
+        candidates = (starts[keep_trains, None] + offsets[None, :]).ravel()
+        return candidates[candidates < duration_s]
     keep = rng.random(candidates.size) < click_probability
     return candidates[keep]
+
+
+def create_click_preview_wav(
+    click_path: str | Path,
+    output_path: str | Path,
+    volume: float = 0.20,
+    sample_rate: int = DEFAULT_SAMPLE_RATE,
+) -> Path:
+    """Write a short WAV containing only the extracted single click."""
+    _validate(1.0, volume, sample_rate)
+    clicks, click_rate = read_wav_mono(click_path)
+    click = _extract_click_event(_linear_resample(clicks, click_rate, sample_rate), sample_rate)
+    click -= float(np.mean(click))
+    peak = float(np.max(np.abs(click)))
+    if peak <= np.finfo(float).eps:
+        raise ValueError("Extracted click has no measurable amplitude")
+    click = click / peak * volume
+    pad = np.zeros(round(0.05 * sample_rate), dtype=np.float32)
+    return write_wav(output_path, np.concatenate((pad, click, pad)), sample_rate)
 
 
 def _render_click_events(

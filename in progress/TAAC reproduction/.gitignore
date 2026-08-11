@@ -1,0 +1,36 @@
+# Notebook/runtime caches
+.ipynb_checkpoints/
+__pycache__/
+*.py[cod]
+
+# Operating-system/editor garbage
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Generated and machine-local data
+generated/
+recordings/
+settings/
+tmp/
+*.tmp
+*.log
+
+# Audio renders and captures (keep intentional assets under assets/)
+*.wav
+*.flac
+*.aiff
+*.aif
+*.raw
+*.bin
+!assets/
+!assets/*.wav
+
+# Local environments and tooling
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/

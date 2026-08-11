@@ -1,0 +1,49 @@
+# macOS / Windows metadata
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Python caches and build artifacts
+__pycache__/
+*.py[cod]
+*.so
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Jupyter transient state
+.ipynb_checkpoints/
+
+# Editors and temporary files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.tmp
+*.temp
+*.log
+
+# Local environments
+.venv/
+venv/
+env/
+.env
+.env.*
+
+# Main notebook: generated previews and saved settings
+generated/*
+!generated/.gitkeep
+
+# TAAC reproduction: machine-local recordings and renders
+in progress/TAAC reproduction/generated/
+in progress/TAAC reproduction/recordings/
+in progress/TAAC reproduction/settings/
+in progress/TAAC reproduction/tmp/
+
+# Keep intentional source/example audio under assets/ trackable.
